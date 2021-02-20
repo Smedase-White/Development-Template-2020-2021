@@ -1,1 +1,1 @@
-create_executable_project(test_main)
+create_executable_project(test_converter)

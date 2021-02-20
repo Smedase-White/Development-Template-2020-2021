@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
 
-project(samples)
+project(converterRA)
 
 include(cmake/function.cmake)
 
-add_subdirectory(function_lib)
+add_subdirectory(converterRA)
 add_subdirectory(main)
 
-option(BTEST "build test?" OFF)
+option(BTEST "build test?" ON)
 
 if(BTEST)
     add_subdirectory(gtest)
