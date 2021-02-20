@@ -129,7 +129,7 @@ void Number::arabicToRoman()
 		case 9:
 		{
 			int tempRank = currentTens;
-			while (input % 10 == 9)
+			/*while (input % 10 == 9)
 			{
 				input = input / 10;
 				currentTens *= 10;
@@ -140,7 +140,7 @@ void Number::arabicToRoman()
 				currentTens *= 10;
 				output.insert(output.begin(), takeRomanSymbol(5 * currentTens).symbol);
 			}
-			else
+			else*/
 				output.insert(output.begin(), takeRomanSymbol(10 * currentTens).symbol);
 			output.insert(output.begin(), takeRomanSymbol(tempRank).symbol);
 			break;

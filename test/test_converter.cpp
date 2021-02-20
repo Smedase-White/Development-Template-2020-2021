@@ -35,7 +35,8 @@ TEST(test_converter, romanToArabic_19)
 
 TEST(test_converter, romanToArabic_999)
 {
-	EXPECT_EQ(999, Number("IM").getArabic().value);
+	//EXPECT_EQ(999, Number("IM").getArabic().value);
+	EXPECT_EQ(999, Number("CMXCIX").getArabic().value);
 }
 
 
@@ -67,7 +68,8 @@ TEST(test_converter, arabicToRoman_8)
 
 TEST(test_converter, arabicToRoman_499)
 {
-	EXPECT_EQ("ID", Number(499).getRoman().value);
+	//EXPECT_EQ("ID", Number(499).getRoman().value);
+	EXPECT_EQ("CDXCIX", Number(499).getRoman().value);
 }
 
 
