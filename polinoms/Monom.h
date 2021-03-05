@@ -5,7 +5,7 @@
 
 typedef unsigned int degree_storage;
 
-const unsigned int MONOM_BASE = 21;
+const unsigned int MONOM_BASE = 101;
 const unsigned int VARS_COUNT = 3;
 const degree_storage MAX_COMPESSED_DEGREE = pow(MONOM_BASE, VARS_COUNT);
 

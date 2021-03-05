@@ -6,9 +6,6 @@ class Polinom
 {
 private:
 	OrderList<Monom>* monoms;
-
-	bool addMonomAtFirst(const Monom&);
-	Iterator<Monom>& addMonom(const Monom&, Iterator<Monom>&);
 public:
 	Polinom();
 	Polinom(const Monom&);
@@ -26,6 +23,15 @@ public:
 	double getValue(const double, const double, ...);
 	double getValue(const double*&);
 	double getValue(const double[VARS_COUNT]);
+
+	int getCoef()
+	{
+		int result = 0;
+		Iterator<Monom> i = monoms->getIterator();
+		while (i.hasNext())
+			result += i.next().getCoef();
+		return result;
+	}
 
 	friend std::ostream& operator<<(std::ostream&, const Polinom&);
 };

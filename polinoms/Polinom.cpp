@@ -29,99 +29,47 @@ Polinom& Polinom::operator=(const Polinom& polinom)
 	return *this;
 }
 
-bool Polinom::addMonomAtFirst(const Monom& monom)
-{
-	if (monom.getCoef() == 0)
-		return false;
-	Monom temp(this->monoms->getFirst());
-	if (monom > temp)
-	{
-		this->monoms->addFirst(monom);
-		return true;
-	}
-	else
-		if (monom == temp)
-		{
-			if (monom.getCoef() + temp.getCoef() == 0)
-				this->monoms->removeFirst();
-			else
-				this->monoms->replaceFirst(temp + monom);
-			return true;
-		}
-	return false;
-}
-
-Iterator<Monom>& Polinom::addMonom(const Monom& monom, Iterator<Monom>& iter)
-{
-	if (monom.getCoef() == 0)
-		return iter;
-	while (iter.hasNext())
-	{
-		Monom temp = iter.current();
-		if (monom > temp)
-		{
-			iter.add(monom);
-			return iter;
-		}
-		else
-			if (monom == temp)
-			{
-				/*if (monom.getCoef() + temp.getCoef() == 0)
-				{
-					iter.remove();
-					return iter;
-				}*/
-				iter.replace(temp + monom);
-				return iter;
-			}
-		iter.next();
-	}
-	iter.add(monom);
-	return iter;
-}
-
 Polinom Polinom::operator+(const Polinom& polinom) const
 {
 	if (this->monoms->empty())
 		return polinom;
 	if (polinom.monoms->empty())
 		return *this;
-	Polinom result(*this);
-	Iterator<Monom> main = result.monoms->getIterator();
+	Polinom result;
+	Iterator<Monom> main = this->monoms->getIterator();
 	Iterator<Monom> second = polinom.monoms->getIterator();
-	Monom a(main.next());
-	Monom b(second.next());
-	if (result.addMonomAtFirst(b))
+	while (main.hasNext() && second.hasNext())
 	{
-		main = result.monoms->getIterator();
-		if (second.hasNext())
-			b = second.next();
+		if (main.current() < second.current())
+			result.monoms->addLast(second.next());
 		else
-			return result;
+			if (main.current() > second.current())
+				result.monoms->addLast(main.next());
+			else
+				result.monoms->addLast(main.next() + second.next());
 	}
+	while (main.hasNext())
+		result.monoms->addLast(main.next());
 	while (second.hasNext())
-	{
-		main = result.addMonom(b, main);
-		b = second.next();
-	}
-	result.addMonom(b, main);
+		result.monoms->addLast(second.next());
+
 	return result;
 }
 
 Polinom& Polinom::operator+=(const Polinom& polinom)
 {
-	*this = *this + polinom;
+	* this = *this + polinom;
 	return *this;
 }
 
 Polinom Polinom::operator-(const Polinom& polinom) const
 {
-	return *this + polinom * Monom(-1);
+	return *this + polinom * Polinom(Monom(-1));
 }
 
 Polinom& Polinom::operator-=(const Polinom& polinom)
 {
-	*this = *this - polinom;
+	*this += polinom * Polinom(Monom(-1));
 	return*this;
 }
 
@@ -134,17 +82,17 @@ Polinom Polinom::operator*(const Polinom& polinom) const
 	while (main.hasNext())
 	{
 		Polinom temp;
-		Monom a(main.next());
-		if (a.getCoef() == 0)
+		if (main.current().getCoef() == 0)
 			continue;
 		Iterator<Monom> second = polinom.monoms->getIterator();
 		while (second.hasNext())
 		{
-			Monom b(second.next());
-			if (b.getCoef() != 0)
-				temp.monoms->addLast(a * b);
+			if (second.current().getCoef() != 0)
+				temp.monoms->addLast(main.current() * second.current());
+			second.next();
 		}
 		result += temp;
+		main.next();
 	}
 	return result;
 }

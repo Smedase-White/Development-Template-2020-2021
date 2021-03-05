@@ -8,26 +8,28 @@ void check()
 {
 	Polinom p1;
 	Polinom p2;
-	for (int x = 0; x < 11; x++)
+	for (int x = 0; x < 51; x++)
 	{
-		for (int y = 0; y < 11; y++)
+		for (int y = 0; y < 51; y++)
 		{
-			for (int z = 0; z < 11; z++)
+			for (int z = 0; z < 51; z++)
 			{
-				p1 += Monom(rand() % 100 - 50, fullDegrees(x, y, z));
-				p2 += Monom(rand() % 100 - 50, fullDegrees(x, y, z));
+				//rand() % 100 - 50
+				p1 += Monom(1, fullDegrees(x, y, z));
+				p2 += Monom(1, fullDegrees(x, y, z));
 			}
 		}
 	}
-	time_t t = time(0);
+	clock_t t = clock();
 	Polinom p3 = p1 * p2;
-	std::cout << time(0) - t << '\n';
-	cout << p3.getValue(1., 1., 1.) << '\n';
+	std::cout << (float) (clock() - t) / CLOCKS_PER_SEC << " s\n";
+	//cout << p3.getValue(1., 1., 1.) << '\n';
+	cout << p3.getCoef() << '\n';
 }
 
 int main()
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		cout << i << ": ";
 		check();

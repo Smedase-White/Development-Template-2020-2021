@@ -6,7 +6,7 @@ struct Link
 {
 	T value;
 	Link* next;
-	Link(Link* _next, T _value = 0) : value(_value), next(_next) {}
+	Link(Link* _next = NULL, T _value = 0) : next(_next), value(_value) {}
 };
 
 template <class T>
@@ -14,42 +14,22 @@ class Iterator
 {
 private:
 	Link<T>* curr;
-	Link<T>* prev;
 public:
 	Iterator() {};
-	Iterator(Link<T>* start) { this->curr = start; prev = NULL; };
+	Iterator(Link<T>* start) { this->curr = start; };
 	T current()
 	{
 		return this->curr->value;
 	}
 	T next()
 	{
-		this->prev = this->curr;
+		Link<T>* temp = this->curr;
 		this->curr = this->curr->next;
-		return this->prev->value;
+		return temp->value;
 	}
 	bool hasNext()
 	{
 		return (this->curr != NULL);
-	}
-	void add(const T& value)
-	{
-		Link<T>* temp = new Link<T>(this->curr, value);
-		if (this->prev != NULL)
-			this->prev->next = temp;
-		this->curr = temp;
-
-	}
-	void replace(const T& value)
-	{
-		this->curr->value = value;
-	}
-	void remove()
-	{
-		if (this->prev != NULL)
-			this->prev->next = this->curr->next;
-		delete this->curr;
-		this->curr = this->prev->next;
 	}
 };
 
@@ -60,21 +40,78 @@ private:
 	Link<T>* first;
 	Link<T>* last;
 
+	template <class T>
+	class ListManager;
+	static ListManager<T>* listManager;
+	Link<T>* newLink(Link<T>* _next = NULL, T _value = 0)
+	{
+		Link<T>* temp = listManager->get();
+		temp->next = _next;
+		temp->value = _value;
+		return temp;
+	}
+	void deleteLink(Link<T>* element)
+	{
+		listManager->give(element);
+	}
 public:
+	template <class T>
+	class ListManager
+	{
+	private:
+		Link<T>* start;
+	public:
+		ListManager(const int& size = 1000)
+		{
+			start = new Link<T>;
+			Link<T>* temp = start;
+			for (int i = 0; i < size; i++)
+			{
+				temp->next = new Link<T>;
+				temp = temp->next;
+			}
+		}
+		~ListManager()
+		{
+			Link<T>* temp;
+			while (start != NULL)
+			{
+				temp = start->next;
+				delete start;
+				start = temp;
+			}
+		}
+		Link<T>* get()
+		{
+			if (start == NULL)
+			{
+				start = new Link<T>;
+			}
+			Link<T>* temp = start;
+			start = start->next;
+			return temp;
+		}
+		void give(Link<T>* element)
+		{
+			element->next = start;
+			start = element;
+		}
+	};
 	LinkList() { this->first = NULL; this->last = NULL; };
 	LinkList(const LinkList& list)
 	{
 		Link<T>* tempOld = list.first;
 		this->first = NULL;
 		this->last = NULL;
+		this->listManager = list.listManager;
 		if (tempOld == NULL)
 			return;
-		Link<T>* tempNew = new Link<T>(NULL, tempOld->value);
+		Link<T>* tempNew = newLink(NULL, tempOld->value);
 		this->first = tempNew;
 		tempOld = tempOld->next;
 		while (tempOld != NULL)
 		{
-			tempNew->next = new Link<T>(NULL, tempOld->value);
+			tempNew->next = newLink(NULL, tempOld->value);
 			tempNew = tempNew->next;
 			tempOld = tempOld->next;
 		}
@@ -86,34 +123,28 @@ public:
 		while (first != NULL)
 		{
 			temp = first->next;
-			delete first;
+			deleteLink(first);
 			first = temp;
 		}
+		
 	}
 
 	LinkList<T>& operator=(const LinkList<T>& list)
 	{
-		Link<T>* temp;
-		while (first != NULL)
-		{
-			temp = first->next;
-			delete first;
-			first = temp;
-		}
-
 		if (this != &list)
 		{
+			~LinkList();
 			Link<T>* tempOld = list.first;
 			this->first = NULL;
 			this->last = NULL;
 			if (tempOld == NULL)
 				return;
-			Link<T>* tempNew = new Link<T>(NULL, tempOld->value);
+			Link<T>* tempNew = newLink(NULL, tempOld->value);
 			this->first = tempNew;
 			tempOld = tempOld->next;
 			while (tempOld != NULL)
 			{
-				tempNew->next = new Link<T>(tempNew, tempOld->value);
+				tempNew->next = newLink(tempNew, tempOld->value);
 				tempNew = tempNew->next;
 				tempOld = tempOld->next;
 			}
@@ -125,14 +156,14 @@ public:
 
 	void addFirst(const T& _value)
 	{
-		this->first = new Link<T>(this->first, _value);
+		this->first = newLink(this->first, _value);
 		if (this->last == NULL)
 			this->last = this->first;
 	}
 	void addLast(const T& _value)
 	{
 		Link<T>* temp = this->last;
-		this->last = new Link<T>(NULL, _value);
+		this->last = newLink(NULL, _value);
 		if (temp != NULL)
 			temp->next = this->last;
 		else
@@ -144,7 +175,7 @@ public:
 		if (this->empty())
 			throw std::logic_error("Список пустой.");
 		Link<T>* temp = this->first->next;
-		delete this->first;
+		deleteLink(this->first);
 		this->first = temp;
 		if (temp == NULL)
 			this->last = NULL;
@@ -187,6 +218,9 @@ public:
 };
 
 template <class T>
+typename LinkList<T>::ListManager<T>* LinkList<T>::listManager = new ListManager<T>(1000);
+
+template <class T>
 class OrderList : public LinkList<T>
 {
 private:
@@ -222,3 +256,21 @@ public:
 		curr.add(value);
 	}
 };
+
+template<class T>
+class Outer {
+public:
+
+	class Inner;
+
+	static Inner* x;
+
+	//...
+
+	class Inner {
+		//...
+	};
+};
+
+template<class T>
+typename Outer<T>::Inner* Outer<T>::x = NULL;
