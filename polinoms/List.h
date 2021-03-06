@@ -138,7 +138,7 @@ public:
 			this->first = NULL;
 			this->last = NULL;
 			if (tempOld == NULL)
-				return;
+				return NULL;
 			Link<T>* tempNew = newLink(NULL, tempOld->value);
 			this->first = tempNew;
 			tempOld = tempOld->next;
@@ -211,66 +211,11 @@ public:
 	{
 		return this->first == NULL;
 	}
-	Iterator<T> getIterator() const
+	Iterator<T> begin() const
 	{
 		return Iterator<T>(this->first);
 	}
 };
 
 template <class T>
-typename LinkList<T>::ListManager<T>* LinkList<T>::listManager = new ListManager<T>(1000);
-
-template <class T>
-class OrderList : public LinkList<T>
-{
-private:
-	Iterator<T> curr;
-public:
-	OrderList() : LinkList<T>()
-	{
-		curr = this->getIterator();
-	}
-	void add(const T& value)
-	{
-		Iterator<T> first = this->getIterator();
-		if (!first.hasNext())
-		{
-			this->addFirst(value);
-			curr = this->getIterator();
-			return;
-		}
-		if (value >= first.next())
-		{
-			this->addFirst(value);
-			curr = this->getIterator();
-			return;
-		}
-		if (curr.next() < value)
-			curr = this->getIterator();
-		while (curr.hasNext())
-		{
-			if (value >= curr.current())
-				break;
-			curr.next();
-		}
-		curr.add(value);
-	}
-};
-
-template<class T>
-class Outer {
-public:
-
-	class Inner;
-
-	static Inner* x;
-
-	//...
-
-	class Inner {
-		//...
-	};
-};
-
-template<class T>
-typename Outer<T>::Inner* Outer<T>::x = NULL;
+typename LinkList<T>::ListManager<T>* LinkList<T>::listManager = new ListManager<T>;

@@ -2,30 +2,30 @@
 
 Polinom::Polinom()
 {
-	this->monoms = new OrderList<Monom>();
+	this->monoms = new LinkList<Monom>();
 }
 
 Polinom::Polinom(const Monom& monom)
 {
-	this->monoms = new OrderList<Monom>();
+	this->monoms = new LinkList<Monom>();
 	this->monoms->addFirst(monom);
 }
 
 Polinom::Polinom(const Polinom& polinom)
 {
-	this->monoms = new OrderList<Monom>(*polinom.monoms);
+	this->monoms = new LinkList<Monom>(*polinom.monoms);
 }
 
 Polinom::~Polinom()
 {
-	this->monoms->~OrderList();
+	this->monoms->~LinkList();
 	delete this->monoms;
 }
 
 Polinom& Polinom::operator=(const Polinom& polinom)
 {
-	this->monoms->~OrderList();
-	this->monoms = new OrderList<Monom>(*polinom.monoms);
+	this->monoms->~LinkList();
+	this->monoms = new LinkList<Monom>(*polinom.monoms);
 	return *this;
 }
 
@@ -36,8 +36,8 @@ Polinom Polinom::operator+(const Polinom& polinom) const
 	if (polinom.monoms->empty())
 		return *this;
 	Polinom result;
-	Iterator<Monom> main = this->monoms->getIterator();
-	Iterator<Monom> second = polinom.monoms->getIterator();
+	Iterator<Monom> main = this->monoms->begin();
+	Iterator<Monom> second = polinom.monoms->begin();
 	while (main.hasNext() && second.hasNext())
 	{
 		if (main.current() < second.current())
@@ -78,13 +78,13 @@ Polinom Polinom::operator*(const Polinom& polinom) const
 	if (!this->monoms->getFirst().checkDegrees(polinom.monoms->getFirst()))
 		throw std::logic_error("Degrees is big.");
 	Polinom result;
-	Iterator<Monom> main = this->monoms->getIterator();
+	Iterator<Monom> main = this->monoms->begin();
 	while (main.hasNext())
 	{
 		Polinom temp;
 		if (main.current().getCoef() == 0)
 			continue;
-		Iterator<Monom> second = polinom.monoms->getIterator();
+		Iterator<Monom> second = polinom.monoms->begin();
 		while (second.hasNext())
 		{
 			if (second.current().getCoef() != 0)
@@ -129,7 +129,7 @@ double Polinom::getValue(const double _values[VARS_COUNT])
 	for (int i = 0; i < VARS_COUNT; i++)
 		values[i] = _values[i];
 	double result = 0;
-	Iterator<Monom> main = this->monoms->getIterator();
+	Iterator<Monom> main = this->monoms->begin();
 	while (main.hasNext())
 		result += main.next().getValue(values);
 	return result;
@@ -137,7 +137,7 @@ double Polinom::getValue(const double _values[VARS_COUNT])
 
 std::ostream& operator<<(std::ostream& ostr, const Polinom& polinom)
 {
-	Iterator<Monom> iter = polinom.monoms->getIterator();
+	Iterator<Monom> iter = polinom.monoms->begin();
 	while (iter.hasNext())
 		ostr << iter.next() << '\n';
 	return ostr;

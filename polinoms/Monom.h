@@ -5,7 +5,7 @@
 
 typedef unsigned int degree_storage;
 
-const unsigned int MONOM_BASE = 101;
+const unsigned int MONOM_BASE = 21;
 const unsigned int VARS_COUNT = 3;
 const degree_storage MAX_COMPESSED_DEGREE = pow(MONOM_BASE, VARS_COUNT);
 
@@ -23,7 +23,7 @@ struct fullDegrees
 			temp /= MONOM_BASE; 
 		} 
 	};
-	fullDegrees(const unsigned int*& pDegrees)
+	fullDegrees(unsigned int*& pDegrees)
 	{ 
 		for (int i = 0; i < VARS_COUNT; i++)
 			if (pDegrees[i] >= MONOM_BASE)

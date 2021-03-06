@@ -5,7 +5,7 @@
 class Polinom
 {
 private:
-	OrderList<Monom>* monoms;
+	LinkList<Monom>* monoms;
 public:
 	Polinom();
 	Polinom(const Monom&);
@@ -27,7 +27,7 @@ public:
 	int getCoef()
 	{
 		int result = 0;
-		Iterator<Monom> i = monoms->getIterator();
+		Iterator<Monom> i = monoms->begin();
 		while (i.hasNext())
 			result += i.next().getCoef();
 		return result;
