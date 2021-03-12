@@ -24,14 +24,5 @@ public:
 	double getValue(const double*&);
 	double getValue(const double[VARS_COUNT]);
 
-	int getCoef()
-	{
-		int result = 0;
-		Iterator<Monom> i = monoms->begin();
-		while (i.hasNext())
-			result += i.next().getCoef();
-		return result;
-	}
-
 	friend std::ostream& operator<<(std::ostream&, const Polinom&);
 };

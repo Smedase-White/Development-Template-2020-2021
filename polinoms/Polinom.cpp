@@ -128,7 +128,7 @@ double Polinom::getValue(const double _values[VARS_COUNT])
 	double values[VARS_COUNT];
 	for (int i = 0; i < VARS_COUNT; i++)
 		values[i] = _values[i];
-	double result = 0;
+	double result = 0.;
 	Iterator<Monom> main = this->monoms->begin();
 	while (main.hasNext())
 		result += main.next().getValue(values);

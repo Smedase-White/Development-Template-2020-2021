@@ -7,7 +7,7 @@ include(cmake/function.cmake)
 add_subdirectory(polinoms)
 add_subdirectory(main)
 
-option(BTEST "build test?" OFF)
+option(BTEST "build test?" ON)
 
 if(BTEST)
     add_subdirectory(gtest)
