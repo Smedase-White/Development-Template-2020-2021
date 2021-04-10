@@ -1,57 +1,112 @@
-#include <string>
-#include "roman.h"
+#include "text.h"
 
 int main() 
 {
-	char romanSymbols[] = { 'I', 'V', 'X', 'L', 'C', 'D', 'M' };
-	std::string text;
-	std::getline(std::cin, text);
-	std::string output = "";
-	std::string temp = "";
-	bool space = true;
-	for (char c : text)
+	setlocale(LC_ALL, "Russian");
+	Text t;
+	bool run = true;
+	while (run)
 	{
-		if (space)
+		system("cls");
+		cout << t;
+		cout << "\n1 - Удалить текущую строчку.\n";
+		cout << "2 - Добавить новую строчку.\n";
+		cout << "3 - Добавить новую подстрочку.\n";
+		cout << "4 - Перейти на следущую строчку.\n";
+		cout << "5 - Перейти на первую подстрочку.\n";
+		cout << "6 - Перейти на предыдущую строчку.\n";
+		cout << "7 - Заменить текущую строчку.\n";
+		cout << "8 - Заменить ключ текущей строчки.\n";
+		cout << "9 - Заменить значение текущей строчки.\n";
+		cout << "i - Считать фалй.\n";
+		cout << "o - Записать в файл.\n";
+		cout << "\nq - Выйти из программы.\n";
+		char s;
+		cin >> s;
+		cin.get();
+		try
 		{
-			bool isRoman = false;
-			if (c == ' ')
+			switch (s)
 			{
-				output.append(std::to_string(Number(temp).getArabic().value));
-				output.insert(output.end(), c);
-				temp = "";
+			case '1':
+				t.remove();
+				break;
+			case '2':
+			{
+				string line; getline(cin, line);
+				t.addLeft(line);
+				break;
 			}
-			else
+			case '3':
 			{
-				for (char rs : romanSymbols)
-					if (rs == c)
-					{
-						isRoman = true;
-						break;
-					}
-				if (isRoman)
-				{
-					temp.insert(temp.end(), c);
-				}
-				else
-				{
-					space = false;
-					output.append(temp);
-					output.insert(output.end(), c);
-					temp = "";
-				}
+				string line; getline(cin, line);
+				t.addRight(line);
+				break;
+			}
+			case '4':
+				t.left();
+				break;
+			case '5':
+				t.right();
+				break;
+			case '6':
+				t.top();
+				break;
+			case '7':
+			{
+				string line; getline(cin, line);
+				t.replace(line);
+				break;
+			}
+			case '8':
+			{
+				string line; getline(cin, line);
+				t.replaceKey(line);
+				break;
+			}
+			case '9':
+			{
+				string line; getline(cin, line);
+				t.replaceValue(line);
+				break;
+			}
+			case 'i':
+			{
+				string line; getline(cin, line);
+				ifstream fileI("..\\" + line);
+				if (fileI.is_open())
+					fileI >> t;
+				fileI.close();
+				break;
+			}
+			case 'o':
+			{
+				string line; getline(cin, line);
+				ofstream fileO("..\\" + line);
+				if (fileO.is_open())
+					fileO << t;
+				fileO.close();
+				break;
+			}
+			case 'z':
+			{
+				string line; getline(cin, line);
+				cout << t.getValue(line) << '\n';
+				system("pause");
+				break;
+			}
+			case 'q':
+				run = false;
+				break;
+			default:
+				break;
 			}
 		}
-		else
+		catch (logic_error l)
 		{
-			if (c == ' ')
-				space = true;
-			else
-				space = false;
-			output.insert(output.end(), c);
+			cout << l.what() << '\n';
+			system("pause");
 		}
 	}
-	if (temp.length() > 0)
-		output.append(std::to_string(Number(temp).getArabic().value));
-	std::cout << output;
 	return 0;
 }
