@@ -49,7 +49,7 @@ inline list<string> split(const string& line, char spliter, int max_size)
 
 enum class object_type
 {
-	String, Title
+	String, Comment, Title
 };
 
 class Object
@@ -73,6 +73,19 @@ public:
 	string getLine() const { return value; }
 };
 
+class Comment : public Object
+{
+private:
+	string value;
+public:
+	Comment(const string& v) : value(v) {};
+	string getString() const { return value; }
+
+	object_type getType() const { return object_type::Comment; }
+	string getLine() const { return "#" + value; }
+};
+
+
 class Title : public Object
 {
 public:
@@ -90,15 +103,36 @@ private:
 public:
 	Line(const string& line)
 	{
+		if (line[0] == '#')
+		{
+			key = "";
+			string s = line;
+			s.erase(0, 1);
+			value = new Comment(s);
+			return;
+		}
 		list<string> underparts = split(line, ':', 2);
-		key = underparts.front();
-		if (underparts.back() == "")
-			value = new Title();
+		if (underparts.size() == 1)
+		{
+			key = "";
+			value = new Comment(underparts.front());
+		}
 		else
-			value = new String(underparts.back());
+		{
+			key = underparts.front();
+			if (underparts.back() == "")
+				value = new Title();
+			else
+				value = new String(underparts.back());
+		}
 	}
 	string getKey() { return key; }
-	void setKey(const string& s) { key = s; }
+	void setKey(const string& s) 
+	{ 
+		key = s; 
+		if (value->getType() == object_type::Comment)
+			value = new String(value->getString());
+	}
 	Object* getValue() { return value; }
 	void setValue(const string& s) 
 	{
@@ -107,5 +141,18 @@ public:
 		else
 			value = new String(s); 
 	}
-	string getLine() { return key + ":" + value->getLine(); }
+	string getLine() 
+	{
+		switch (value->getType())
+		{
+		case object_type::String :
+			return key + ":" + value->getLine();
+		case object_type::Comment:
+			return value->getLine();
+		case object_type::Title:
+			return key + ":";
+		default:
+			return "";
+		}
+	}
 };

@@ -20,10 +20,11 @@ void Text::writeFile(ofstream& out, unit* curr, int level) const
 {
 	if (curr == nullptr)
 		return;
+	if (curr != root)
+		out << endl;
 	for (int i = 0; i < level; i++)
 		out << "    ";
 	out << curr->value.getLine();
-	out << endl;
 	writeFile(out, curr->right, level + 1);
 	writeFile(out, curr->left, level);
 }
