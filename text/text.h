@@ -37,20 +37,21 @@ public:
 	Text() { root = curr = nullptr; }
 	~Text() { if (root != nullptr) removeBranch(root); }
 
+	void addLeft(const string& line);
+	void addRight(const string& line);
+
 	bool right();
 	bool left();
 	bool top();
 	bool overTop();
 
-	void addLeft(const string& line);
-	void addRight(const string& line);
+	string getValue(string& path);
 
 	void replace(const string& line);
 	void replaceKey(const string& line);
 	void replaceValue(const string& line);
 	void remove();
 
-	string getValue(string& path);
 
 	friend ostream& operator<<(ostream& out, const Text& t)
 	{

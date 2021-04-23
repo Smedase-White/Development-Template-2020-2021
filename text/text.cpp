@@ -74,15 +74,19 @@ void Text::removeBranch()
 
 void Text::removeBranch(unit* element)
 {
-	if (element->right != nullptr)
-		removeBranch(element->right);
-	if (element->left != nullptr)
-		removeBranch(element->left);
+	if (element == nullptr)
+		return;
+	removeBranch(element->right);
+	removeBranch(element->left);
 	delete element;
 }
 
 unit* Text::getUnit(string& line)
 {
+	if (line == "")
+		return nullptr;
+	if (root == nullptr)
+		return nullptr;
 	list<string> path = split(line, '.');
 	string last = path.back();
 	path.pop_back();
@@ -120,6 +124,34 @@ unit* Text::getUnit(string& line)
 	return temp;
 }
 
+void Text::addLeft(const string& line)
+{
+	Line* l = new Line(line);
+	if (curr == nullptr)
+	{
+		root = new unit(*l, root, nullptr);
+		curr = root;
+	}
+	else
+		curr->left = new unit(*l, curr->left);
+}
+
+void Text::addRight(const string& line)
+{
+	Line* l = new Line(line);
+	if (curr == nullptr)
+	{
+		root = new unit(*l, nullptr, root);
+		curr = root;
+	}
+	else
+	{
+		if (curr->value.getValue()->getType() == object_type::String)
+			curr->value.setValue("");
+		curr->right = new unit(*l, curr->right);
+	}
+}
+
 bool Text::right()
 {
 	if (curr == nullptr)
@@ -155,48 +187,29 @@ bool Text::overTop()
 {
 	if (path.empty())
 		return false;
-	unit* temp;
+	unit* temp = curr;
 	while (true)
 	{
+		if (path.top()->right == temp)
+		{
+			curr = path.top();
+			path.pop();
+			return true;
+		}
 		temp = path.top();
 		path.pop();
 		if (path.empty())
 			return false;
-		if (path.top()->right == temp)
-		{
-			curr = path.top();
-			return true;
-		}
 	}
 	return true;
 }
 
-void Text::addLeft(const string& line)
+string Text::getValue(string& path)
 {
-	Line* l = new Line(line);
-	if (curr == nullptr)
-	{
-		root = new unit(*l, root, nullptr);
-		curr = root;
-	}
-	else
-		curr->left = new unit(*l, curr->left);
-}
-
-void Text::addRight(const string& line)
-{
-	Line* l = new Line(line);
-	if (curr == nullptr)
-	{
-		root = new unit(*l, nullptr, root);
-		curr = root;
-	}
-	else
-	{
-		if (curr->value.getValue()->getType() == object_type::String)
-			curr->value.setValue("");
-		curr->right = new unit(*l, curr->right);
-	}
+	unit* temp = getUnit(path);
+	if (temp == nullptr)
+		return "";
+	return temp->value.getValue()->getLine();
 }
 
 void Text::replace(const string& line)
@@ -226,20 +239,16 @@ void Text::replaceValue(const string& line)
 void Text::remove()
 {
 	if (curr == nullptr)
-		return;
+		throw logic_error("Con't remove line in empty text.");
 	removeBranch();
-}
-
-string Text::getValue(string& path)
-{
-	unit* temp = getUnit(path);
-	if (temp == nullptr)
-		return "";
-	return temp->value.getValue()->getLine();
 }
 
 ifstream& operator>>(ifstream& in, Text& t)
 {
+	t.removeBranch(t.root);
+	t.root = nullptr;
+	t.curr = nullptr;
+	while (!t.path.empty()) { t.path.pop(); }
 	int prevLevel = 0;
 	while (!in.eof())
 	{
